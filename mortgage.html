@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mortgage Calculator</title>
+
+  <!-- React and Babel -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <!-- Link to external CSS -->
+  <link rel="stylesheet" href="mortgage.css" />
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    function MortgageCalculator() {
+      const [principal, setPrincipal] = React.useState('');
+      const [rate, setRate] = React.useState('');
+      const [term, setTerm] = React.useState('');
+      const [payment, setPayment] = React.useState(null);
+
+      const calculate = () => {
+        const P = parseFloat(principal);
+        const r = parseFloat(rate) / 100 / 12;
+        const n = parseInt(term) * 12;
+
+        if (isNaN(P) || isNaN(r) || isNaN(n)) {
+          setPayment('Please enter valid numbers.');
+          return;
+        }
+
+        const monthly = (P * r) / (1 - Math.pow(1 + r, -n));
+        setPayment(`£${monthly.toFixed(2)} per month`);
+      };
+
+      return (
+        <div className="calculator">
+          <h1>Mortgage Calculator</h1>
+
+          <label>
+            <span>
+              Loan Amount
+              <div className="tooltip">The total amount you plan to borrow</div>
+            </span>
+            <input
+              type="number"
+              value={principal}
+              onChange={(e) => setPrincipal(e.target.value)}
+              placeholder="e.g. 200000"
+            />
+          </label>
+
+          <label>
+            <span>
+              Interest Rate (%)
+              <div className="tooltip">Annual percentage rate charged by the lender</div>
+            </span>
+            <input
+              type="number"
+              value={rate}
+              onChange={(e) => setRate(e.target.value)}
+              placeholder="e.g. 3.5"
+            />
+          </label>
+
+          <label>
+            <span>
+              Term (Years)
+              <div className="tooltip">The number of years over which the loan will be repaid</div>
+            </span>
+            <input
+              type="number"
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
+              placeholder="e.g. 30"
+            />
+          </label>
+
+          <button onClick={calculate}>Calculate Monthly Payment</button>
+
+          {payment && (
+            <div className="result">
+              <h2>Estimated Monthly Payment</h2>
+              <p>{payment}</p>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.render(<MortgageCalculator />, document.getElementById('root'));
+  </script>
+</body>
+</html>
